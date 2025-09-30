@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "lwxBWcqOlM4Zb41w6M/SMFgHn40ok+n1ydC5x+vZw2U=",
+  "Source": "MiniReddit.Api",
+  "BasePath": "_content/MiniReddit.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
