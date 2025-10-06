@@ -3,16 +3,18 @@ namespace MiniReddit.Api.Model;
 public class Post
 {
     public int PostId { get; set; }
+
+    public string Title { get; set; } = "";
     
-    public string Title { get; set; }
+    public string Author { get; set; } = "";
     
-    public string Author { get; set; }
+    public string? Content { get; set; }
     
-    public string Content { get; set; }
+    public string? Url { get; set; }
     
-    public DateTime TimeStamp { get; set; }
-    
-    public List<Comment> Comments { get; set; } = new List<Comment>();
+    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+
+    public List<Comment> Comments { get; set; } = new();
     
     public int Upvotes { get; set; }
     
