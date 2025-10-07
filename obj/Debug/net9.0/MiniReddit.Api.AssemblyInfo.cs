@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MiniReddit.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+da14e703217d431fb315a261a8ab66bbbb73c16d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f4f2329e308d1518ab1f4d6da06835f12b3b85c0")]
 [assembly: System.Reflection.AssemblyProductAttribute("MiniReddit.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MiniReddit.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

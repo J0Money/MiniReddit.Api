@@ -2,9 +2,17 @@ using Microsoft.EntityFrameworkCore;
 using MiniReddit.Api.Data;
 using MiniReddit.Api.Model;
 using MiniReddit.Api.Service;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// CORS: tillad din Blazor WASM-origin (skift til din præcise origin, fx https://localhost:7225)
+builder.Services.AddCors(o => o.AddPolicy("Wasm", p =>
+    p.WithOrigins("https://localhost:7228")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+));
 
 // DbContext SQLite
 builder.Services.AddDbContext<RedditContext>(opt => opt.UseSqlite(builder.Configuration.GetConnectionString("ContextSQLite")));
@@ -14,26 +22,35 @@ builder.Services.AddScoped<DataService>();
 
 var app = builder.Build();
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
+app.UseCors("Wasm");
 
 
-app.MapGet("/api/posts", (DataService service) =>
+static PostDto ToDto(Post p) =>
+    new(p.PostId, p.Title, p.Content, p.Url, p.Author, p.Timestamp, p.Upvotes, p.Downvotes);
+
+// === Endpoints (byt disse ud for posts) ===
+app.MapGet("/api/posts", (DataService s) =>
+    s.GetPosts().Select(ToDto)
+);
+
+app.MapGet("/api/posts/{id:int}", (DataService s, int id) =>
 {
-    return service.GetPosts();
+    var p = s.GetPost(id);
+    return p is null ? Results.NotFound() : Results.Ok(ToDto(p));
 });
 
-
-app.MapGet("/api/posts/{id:int}", (DataService service, int id) =>
+app.MapPut("/api/posts/{id:int}/upvote", (DataService s, int id) =>
 {
-    var post = service.GetPost(id);
-    return post is null ? Results.NotFound() : Results.Ok(post);
+    if (!s.UpvotePost(id)) return Results.NotFound();
+    return Results.Ok(ToDto(s.GetPost(id)!));
 });
 
-app.MapPut("/api/posts/{id:int}/upvote", (DataService service, int id) =>
-    service.UpvotePost(id) ? Results.NoContent() : Results.NotFound());
-
-app.MapPut("/api/posts/{id:int}/downvote", (DataService service, int id) =>
-    service.DownvotePost(id) ? Results.NoContent() : Results.NotFound());
+app.MapPut("/api/posts/{id:int}/downvote", (DataService s, int id) =>
+{
+    if (!s.DownvotePost(id)) return Results.NotFound();
+    return Results.Ok(ToDto(s.GetPost(id)!));
+});
 
 
 app.MapPut("/api/posts/{postId:int}/comments/{commentId:int}/upvote",
@@ -58,5 +75,9 @@ app.MapPost("/api/posts/{id:int}/comments", (DataService service, int id, NewCom
 
 app.Run();
 
+public record PostDto(
+    int Id, string Title, string? Content, string? Url,
+    string Author, DateTime Timestamp, int Upvotes, int Downvotes
+);
 public record NewPostData(string Title, string Author, string? Content, string? Url);
 public record NewCommentData(string Author, string Content);
